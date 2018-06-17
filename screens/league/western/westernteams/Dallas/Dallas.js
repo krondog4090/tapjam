@@ -47,9 +47,7 @@ export default class Dallas extends React.Component {
     constructor(props) {
       super(props);
 
-      // AsyncStorage.setItem('score', '0');
       // AsyncStorage.setItem('highScore', '0');
-      // AsyncStorage.setItem('totalPoints', 0);
 
       this.interval = null;
       this.state = {
@@ -63,7 +61,7 @@ export default class Dallas extends React.Component {
         lifecycle: LC_WAITING,
         scored: null,
         score: 0,
-        highScore: 0,
+        highScore: '',
         totalPoints: 0,
         teamScore: 0
       };
@@ -77,10 +75,8 @@ export default class Dallas extends React.Component {
           fontLoaded: true
         });
       });
-
       this.interval = setInterval(this.update.bind(this), 1000 / 60);
     }
-    
   
     componentWillUnmount() {
       if (this.interval) {
@@ -88,28 +84,20 @@ export default class Dallas extends React.Component {
       }
     }
 
-    componentWillMount() {
-    }
-
-    updateHighScore() {
-      // console.log('randomfunctionworks');
-      if (this.score > this.highScore) {
-        this.highScore = Math.ceil(this.score);
-        this.setState({ 
-          highScore: highscore }
-        );
+    async componentWillMount() {
+      const highScore = await AsyncStorage.getItem('highScore');
+      if (highScore) {
+        console.log('returns', (highScore));
+        this.setState({
+          highScore: highScore
+        });
+      } else {
+        await AsyncStorage.setItem('highScore', '0')
+        this.setState({
+          highScore: 0
+        });
       }
     }
-
-    // createHighScore = () => {
-    //   try {
-    //     if (this.state.score > this.state.highScore) {
-    //       AsyncStorage.setItem('highScore', score);
-    //       this.setState(prevState => ({ highScore: prevState.score }));
-    //     } 
-    //   } catch(e) { 
-    //     console.log(e) }
-    // };
 
     onStart(angle) {
       if (this.state.lifecycle === LC_WAITING) {
@@ -137,7 +125,6 @@ export default class Dallas extends React.Component {
     }
   
     updateCollisionVelocity(nextState, ball, netBorder) {
-      console.log('test');
       const xDistance = (netBorder.x - ball.x);
       const yDistance = (netBorder.y - ball.y);
       let normalVector = new Vector(xDistance, yDistance);
@@ -241,7 +228,7 @@ export default class Dallas extends React.Component {
         nextState.vy = this.state.vy + gravity;
       }
     }
-  
+
     updatePosition(nextState) {
       nextState.x = this.state.x + nextState.vx;
       nextState.y = this.state.y - nextState.vy;
@@ -252,19 +239,15 @@ export default class Dallas extends React.Component {
       if (nextState.lifecycle === LC_RESTARTING && nextState.y < this.state.y) {
         nextState.lifecycle = LC_RESTARTING_FALLING;
       }
-  
       if (this.state.scored === null) {
         if (this.state.y + radius > NET_Y + NET_HEIGHT / 2 && nextState.y + radius < NET_Y + NET_HEIGHT / 2) {
           if (nextState.x + radius > NET_LEFT_BORDER_X && nextState.x + radius < NET_RIGHT_BORDER_X) {
             nextState.scored = true;
-            nextState.score += 1, nextState.totalPoints += 1, nextState.teamScore += 1;
-            console.log('score = ', (this.state.score));
-            this.updateHighScore();
-            // if (this.score > this.highScore) {
-            //   this.highScore = Math.ceil(this.score);
-            //   this.setState({ highScore: score });
-            //   console.log('highscore = ', (this.state.highScore));
-            // }
+
+            this.setState({
+              score: nextState.score += 1,
+              totalPoints: nextState.totalPoints += 1,
+            });
           } else {
             nextState.scored = false;
           }
@@ -279,7 +262,6 @@ export default class Dallas extends React.Component {
       if (scale > 0.4 && this.state.y > FLOOR_HEIGHT) {
         scale -= 0.01;
       }
-  
       nextState.scale = scale;
     }
   
@@ -296,7 +278,6 @@ export default class Dallas extends React.Component {
         nextState.rotate = 0;
         nextState.scale = 1;
         nextState.lifecycle = LC_WAITING;
-  
         nextState.scored = null;
       }
 
@@ -331,6 +312,13 @@ export default class Dallas extends React.Component {
     }
   
     update() {
+      if(this.state.score > this.state.highScore) {
+        this.setState({
+          highScore: this.state.score,
+        });
+        AsyncStorage.setItem('highScore', `${this.state.score}`);
+      }
+
       if (this.state.lifecycle === LC_WAITING) return;
       let nextState = null;
       nextState = Object.assign({}, this.state);
@@ -341,7 +329,6 @@ export default class Dallas extends React.Component {
       this.handleCollision(nextState);
       this.handleRestart(nextState);
       this.setState(nextState);
-      this.updateHighScore(nextState);
     }
       
     renderNet(render) {
@@ -367,6 +354,7 @@ export default class Dallas extends React.Component {
     }
   
     render() {
+      // console.log(this.state.highScore);
       const { fontLoaded } = this.state;
       return (
         <View style={styles.container}>
@@ -419,13 +407,3 @@ export default class Dallas extends React.Component {
       color: '#EAEAEA'
     }
   });
-
-
-      //  const highScore = AsyncStorage.getItem("highScore");
-
-    //  Promise.all([fontLoading, highScore]).then(([nil, highScore]) => {
-    //      this.setState({
-    //       fontLoaded: true,
-    //       highScore: highScore,
-    //     });
-    //   });

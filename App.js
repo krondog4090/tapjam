@@ -13,9 +13,9 @@ export default createStackNavigator({
   // MainMenu: {
   //   screen: MainMenu
   // },
-  // LeagueMenu: {
-  //   screen: LeagueMenu
-  // },
+  LeagueMenu: {
+    screen: LeagueMenu
+  },
   // Practice: {
   //   screen: Practice
   // },
