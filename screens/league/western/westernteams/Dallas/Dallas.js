@@ -22,6 +22,7 @@ const rotationFactor = 10;
 const FLOOR_HEIGHT = 48;
 const FLOOR_Y = 11;
 const HOOP_Y = Dimensions.get('window').height - 235;
+const SCOREBOARD_HEIGHT = Dimensions.get('window').height - 480;
 const NET_HEIGHT = 2;
 const NET_WIDTH = 76;
 const NET_Y = Dimensions.get('window').height - 226;
@@ -47,8 +48,6 @@ export default class Dallas extends React.Component {
     constructor(props) {
       super(props);
 
-      // AsyncStorage.setItem('highScore', '0');
-
       this.interval = null;
       this.state = {
         fontLoaded: false,
@@ -62,7 +61,7 @@ export default class Dallas extends React.Component {
         scored: null,
         score: 0,
         highScore: '',
-        totalPoints: 0,
+        totalPoints: '',
         teamScore: 0
       };
     }
@@ -85,9 +84,10 @@ export default class Dallas extends React.Component {
     }
 
     async componentWillMount() {
+
       const highScore = await AsyncStorage.getItem('highScore');
       if (highScore) {
-        console.log('returns', (highScore));
+        console.log('best score = ', (highScore));
         this.setState({
           highScore: highScore
         });
@@ -95,6 +95,19 @@ export default class Dallas extends React.Component {
         await AsyncStorage.setItem('highScore', '0')
         this.setState({
           highScore: 0
+        });
+      }
+      
+      const totalPoints = await AsyncStorage.getItem('totalPoints');
+      if (totalPoints) {
+        console.log('total points = ', (totalPoints));
+        this.setState({
+          totalPoints: totalPoints
+        });
+      } else {
+        await AsyncStorage.setItem('totalPoints', '0')
+        this.setState({
+          totalPoints: Number(totalPoints)
         });
       }
     }
@@ -247,7 +260,10 @@ export default class Dallas extends React.Component {
             this.setState({
               score: nextState.score += 1,
               totalPoints: nextState.totalPoints += 1,
+              teamScore: nextState.teamScore += 1
             });
+            // AsyncStorage.setItem('totalPoints', this.state.totalPoints);
+            // AsyncStorage.setItem('totalPoints', `${this.state.totalPoints}`);
           } else {
             nextState.scored = false;
           }
@@ -319,6 +335,14 @@ export default class Dallas extends React.Component {
         AsyncStorage.setItem('highScore', `${this.state.score}`);
       }
 
+      if(this.state.totalPoints === this.state.totalPoints) {
+        this.setState({
+          totalPoints: Number(this.state.totalPoints)
+        });
+        AsyncStorage.setItem('totalPoints', `${this.state.totalPoints}`);
+        // AsyncStorage.setItem('totalPoints', this.state.totalPoints);
+      }
+
       if (this.state.lifecycle === LC_WAITING) return;
       let nextState = null;
       nextState = Object.assign({}, this.state);
@@ -360,7 +384,8 @@ export default class Dallas extends React.Component {
         <View style={styles.container}>
         <Text style={[styles.teamName, fontLoaded && { fontFamily: 'dallas' }]}>DALLAS</Text>
           <Score 
-            y={FLOOR_HEIGHT * 7} 
+            // y={FLOOR_HEIGHT * 7}
+            y={SCOREBOARD_HEIGHT} 
             teamScore={this.state.teamScore}
             highScore={this.state.highScore}
             totalPoints={this.state.totalPoints}

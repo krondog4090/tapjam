@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import { Font } from 'expo';
 
@@ -58,7 +58,6 @@ export default class EasternIndex extends React.PureComponent {
     }
     render() {
         const { fontLoaded } = this.state;
-        // const { navigate } = this.props.navigation;
 
         return (
             <View style={styles.container}>
@@ -66,6 +65,7 @@ export default class EasternIndex extends React.PureComponent {
                     <Text style={[styles.eastText, fontLoaded && { fontFamily:'nbaFont'}]}>EASTERN</Text>
                 </View>
                 {/* TEAMS */}
+                <ScrollView>
                 <TouchableOpacity style={[styles.teamBox, {backgroundColor: "#CE2333"}]}>
                     <Text style={[styles.teamText, fontLoaded && { fontFamily:'atlanta', color: "#FFFFFF"}]}>Atlanta</Text>
                     <Text style={styles.scoreText}>0</Text>
@@ -140,6 +140,7 @@ export default class EasternIndex extends React.PureComponent {
                     <Text style={[styles.teamText, fontLoaded && { fontFamily:'washington', color: "#DED0D8"}]}>Washington</Text>
                     <Text style={styles.scoreText}>0</Text>
                 </TouchableOpacity>
+                </ScrollView>
             </View>
         );
     }

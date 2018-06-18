@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import { Font } from 'expo';
 
@@ -61,6 +61,16 @@ class WesternIndex extends React.Component {
         goDallasTeam = () => {
             navigate('Dallas');
         }
+        goDenverTeam = () => {
+            alert(
+                'This will take you to the Denver Page'
+            )
+        }
+        goGoldenStateTeam = () => {
+            alert(
+                'This will take you to the Golden State Page'
+            )
+        }
 
         return (
             <View style={styles.container}>
@@ -68,6 +78,7 @@ class WesternIndex extends React.Component {
                     <Text style={[styles.westText, fontLoaded && { fontFamily: 'nbaFont'}]}>WESTERN</Text>
                 </View>
                 {/* TEAMS */}
+                <ScrollView>
                 <TouchableOpacity 
                     style={[styles.teamBox, { backgroundColor: "#094B93" }]}
                     onPress={() => goDallasTeam()}>
@@ -148,6 +159,8 @@ class WesternIndex extends React.Component {
                     <Text style={[styles.teamText, fontLoaded && { fontFamily: 'utah', color: "#0F233F"}]}>Utah</Text>
                     <Text style={styles.scoreText}>0</Text>
                 </TouchableOpacity>
+                </ScrollView>
+                
             </View>
         );
     }
