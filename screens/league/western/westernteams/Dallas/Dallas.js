@@ -1,5 +1,6 @@
 import React, {  } from 'react';
 import { StyleSheet, View, Dimensions, Text, AsyncStorage } from 'react-native';
+import * as firebase from 'firebase';
 import { Font } from 'expo';
 
 import Ball from '../../../components/Ball';
@@ -7,11 +8,15 @@ import Hoop from '../../../components/Hoop';
 import Net from '../../../components/Net';
 import Floor from '../../../components/Floor';
 import Score from './DallasScore';
+import Vector from '../../../utils/Vector';
 
 // Fonts
 import { dallasFont } from '../../../../../assets/fonts/FontList';
 
-import Vector from '../../../utils/Vector';
+// function helpers
+// import { randomFunction } from './FunctionHelpers';
+// import { highScoreFunction } from './FunctionHelpers';
+
 
 // lifecycle restarts here
 const gravity = 0.6; 
@@ -39,6 +44,10 @@ const LC_FALLING = 2;
 const LC_BOUNCING = 3;
 const LC_RESTARTING = 4;
 const LC_RESTARTING_FALLING = 5;
+
+// firebase shit
+const database = firebase.database();
+const ref = database.ref('scores/dallas');
 
 
 export default class Dallas extends React.Component {
@@ -84,7 +93,7 @@ export default class Dallas extends React.Component {
     }
 
     async componentWillMount() {
-
+      // highScoreFunction();
       const highScore = await AsyncStorage.getItem('highScore');
       if (highScore) {
         console.log('best score = ', (highScore));
@@ -94,7 +103,7 @@ export default class Dallas extends React.Component {
       } else {
         await AsyncStorage.setItem('highScore', '0')
         this.setState({
-          highScore: 0
+          highScore: Number(highScore)
         });
       }
       
@@ -262,8 +271,6 @@ export default class Dallas extends React.Component {
               totalPoints: nextState.totalPoints += 1,
               teamScore: nextState.teamScore += 1
             });
-            // AsyncStorage.setItem('totalPoints', this.state.totalPoints);
-            // AsyncStorage.setItem('totalPoints', `${this.state.totalPoints}`);
           } else {
             nextState.scored = false;
           }
@@ -328,9 +335,10 @@ export default class Dallas extends React.Component {
     }
   
     update() {
+      // console.log('props', (this.state));
       if(this.state.score > this.state.highScore) {
         this.setState({
-          highScore: this.state.score,
+          highScore: Number(this.state.score),
         });
         AsyncStorage.setItem('highScore', `${this.state.score}`);
       }
@@ -340,7 +348,6 @@ export default class Dallas extends React.Component {
           totalPoints: Number(this.state.totalPoints)
         });
         AsyncStorage.setItem('totalPoints', `${this.state.totalPoints}`);
-        // AsyncStorage.setItem('totalPoints', this.state.totalPoints);
       }
 
       if (this.state.lifecycle === LC_WAITING) return;
@@ -378,7 +385,6 @@ export default class Dallas extends React.Component {
     }
   
     render() {
-      // console.log(this.state.highScore);
       const { fontLoaded } = this.state;
       return (
         <View style={styles.container}>
