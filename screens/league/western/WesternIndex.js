@@ -1,10 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { withNavigation } from 'react-navigation';
+import * as firebase from 'firebase';
 import { Font } from 'expo';
 
 // Fonts
 import { dallasFont, denverFont, goldenStateFont, laL, laC, memphis, min, newOrleans, okc, phoenix, portland, sacramento, sanAntonio, utah, nbaFont } from '../../../assets/fonts/FontList';
+
+import { dallasTeam, denverTeam, goldenStateTeam, houstonTeam, laLTeam, laCTeam, memphisTeam, minnesotaTeam, newOrleansTeam, oklahomaTeam, phoenixTeam, portlandTeam, sacramentoTeam, sanAntonioTeam, utahTeam } from '../FunctionHelpers';
 
 class WesternIndex extends React.Component {
 
@@ -12,7 +15,7 @@ class WesternIndex extends React.Component {
         super(props);
         this.state = {
             fontLoaded: false,
-            
+
             dallasTeam: 0,
             denverTeam: 0,
             goldenStateTeam: 0,
@@ -28,10 +31,24 @@ class WesternIndex extends React.Component {
             sacramentoTeam: 0,
             sanAntonioTeam: 0,
             utahTeam: 0
-        }
+        };
     }
 
+    // figure out how to connect to db
+    // figure how to get western conference keys
+    // figure how to get total score values from each ekys
+    // setstate for each team with score
+
     componentDidMount() {
+        this.getRef().child('Western_Teams').on('child_added', snapshot => {
+            if (snapshot.exists()) {
+                console.log(snapshot.val())
+                console.log(snapshot.key)
+                this.setState({
+                    teamScore: snapshot.val().key
+                });
+            }
+        })
         Font.loadAsync({
             'dallas': dallasFont,
             'denver': denverFont,
@@ -56,33 +73,61 @@ class WesternIndex extends React.Component {
         });
     }
 
+    componentWillMount() {
+        // this.updateTeamScore();
+    }
 
+    getTeamScoreRef = () => {
+        this.getRef().child('Western_Teams').child(this.state.teamScore)
+    }
+
+    getRef = () => {
+        return firebase.database().ref();
+    }
+
+    updateTeamScore = () => {
+        this.getTeamScoreRef().update(
+            {
+                teamScore: snapshot.val().key
+            }
+        )
+    }
+
+    goDallasTeam = () => {
+    this.props.navigation.navigate('Court', {
+        totalScore: 0,
+        title: 'Dallas',
+        color: '#094B93',
+        teamNameColor: '#EAEAEA',
+        font: dallasFont,
+        score: {
+            fontColor: 'blue',
+            backgroundColor: 'red'
+        }
+    });
+    }
+    goDenverTeam = () => {
+    this.props.navigation.navigate('Court', {
+        totalScore: 0, //,
+        title: 'Denver',
+        color: '#5591CA',
+        teamNameColor: '#FBB83C',
+        font: denverFont,
+        score: {
+            fontColor: 'blue',
+            backgroundColor: 'red'
+        }
+    });    
+    }
+
+    goGoldenStateTeam = () => {
+        alert(
+            'This will take you to the Golden State Page'
+        )
+    }
 
     render() {
         const { fontLoaded } = this.state;
-        // const { navigate } = this.props.navigation;
-
-        // goDallasTeam = () => {
-        //     navigate('Dallas');
-        // }
-
-        goDallasTeam = (item) => {
-            this.props.navigation.navigate('Dallas'), {
-                item: item,
-                state: this.state
-            }
-        }
-        goDenverTeam = () => {
-            alert(
-                'This will take you to the Denver Page'
-            )
-        }
-        goGoldenStateTeam = () => {
-            alert(
-                'This will take you to the Golden State Page'
-            )
-        }
-
         return (
             <View style={styles.container}>
                 <View style={styles.westContainer}>
@@ -92,14 +137,14 @@ class WesternIndex extends React.Component {
                 <ScrollView>
                 <TouchableOpacity 
                     style={[styles.teamBox, { backgroundColor: "#094B93" }]}
-                    onPress={() => goDallasTeam()}>
+                    onPress={this.goDallasTeam}>
                     <Text style={[styles.teamText, fontLoaded && { fontFamily: 'dallas', color: "#EAEAEA"}]}>Dallas</Text>
                     <Text style={styles.scoreText}>{this.state.dallasTeam}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity 
                     style={[styles.teamBox, {backgroundColor: "#5591CA"}]}
-                    onPress={() => goDenverTeam()}>
+                    onPress={this.goDenverTeam}>
                     <Text style={[styles.teamText, fontLoaded && { fontFamily: 'denver', color: "#FBB83C"}]}>Denver</Text>
                     <Text style={styles.scoreText}>{this.state.denverTeam}</Text>
                 </TouchableOpacity>

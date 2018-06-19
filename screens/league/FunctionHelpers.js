@@ -1,5 +1,8 @@
 import * as firebase from 'firebase';
 
+// const getData = this.getData.bind(this);
+// const itemsRef = this.getRef().child('Western_Teams');
+
 // Western Teams
 export function dallasTeam() {
     const database = firebase.database();

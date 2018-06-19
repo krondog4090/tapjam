@@ -3,15 +3,13 @@ import { StyleSheet, View, Dimensions, Text, AsyncStorage } from 'react-native';
 import * as firebase from 'firebase';
 import { Font } from 'expo';
 
-import Ball from '../../../components/Ball';
-import Hoop from '../../../components/Hoop';
-import Net from '../../../components/Net';
-import Floor from '../../../components/Floor';
-import Score from './DallasScore';
-import Vector from '../../../utils/Vector';
+import Ball from './components/Ball';
+import Hoop from './components/Hoop';
+import Net from './components/Net';
+import Floor from './components/Floor';
+import Score from './Score';
+import Vector from './utils/Vector';
 
-// Fonts
-import { dallasFont } from '../../../../../assets/fonts/FontList';
 
 // function helpers
 // import { randomFunction } from './FunctionHelpers';
@@ -46,11 +44,12 @@ const LC_RESTARTING = 4;
 const LC_RESTARTING_FALLING = 5;
 
 // firebase shit
-const database = firebase.database();
-const ref = database.ref('scores/dallas');
+// const database = firebase.database();
+// const ref = database.ref('scores/dallas');
 
 
-export default class Dallas extends React.Component {
+
+export default class Court extends React.Component {
   static navigationOptions = {
     header: null,
   };
@@ -74,10 +73,16 @@ export default class Dallas extends React.Component {
         teamScore: 0
       };
     }
+
+    //PROPS
+    //Font
+    //Color
+    //Title
+
   
     componentDidMount() {
       Font.loadAsync({
-        'dallas': dallasFont,
+        'font': this.props.navigation.state.params.font,
       }).then(() => {
         this.setState({
           fontLoaded: true
@@ -387,10 +392,12 @@ export default class Dallas extends React.Component {
     render() {
       const { fontLoaded } = this.state;
       return (
-        <View style={styles.container}>
-        <Text style={[styles.teamName, fontLoaded && { fontFamily: 'dallas' }]}>DALLAS</Text>
+        <View style={[styles.container, { backgroundColor: this.props.navigation.state.params.color }]}>
+        <Text style={[styles.teamName, fontLoaded && { fontFamily: 'font', color: this.props.navigation.state.params.teamNameColor }]}>{this.props.navigation.state.params.title}</Text>
           <Score 
             // y={FLOOR_HEIGHT * 7}
+            font={this.props.navigation.state.params.font}
+            colors={this.props.navigation.state.params.score}
             y={SCOREBOARD_HEIGHT} 
             teamScore={this.state.teamScore}
             highScore={this.state.highScore}
@@ -419,7 +426,7 @@ export default class Dallas extends React.Component {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "#094B93",
+      // backgroundColor: "#094B93",
       alignItems: 'center',
       justifyContent: 'center',
       paddingTop: 60
@@ -431,7 +438,7 @@ export default class Dallas extends React.Component {
     },
     teamName: {
       fontSize: 64,
-      color: '#EAEAEA'
+    //   color: '#EAEAEA'
     },
     scoreText: {
       fontSize: 25,

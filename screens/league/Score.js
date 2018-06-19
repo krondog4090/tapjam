@@ -17,7 +17,7 @@ class Score extends Component {
 
   componentDidMount() {
     Font.loadAsync({
-      'dallas': require('../../../../../assets/fonts/NBAMavericks.ttf'),
+      'font': this.props.font,
     }).then(() => {
       this.setState({
         fontLoaded: true,
@@ -31,17 +31,17 @@ class Score extends Component {
     return (
       <View style={styles.pageContainer}>
         <View style={[styles.scoreContainer, {
-          bottom: this.props.y,
+          bottom: this.props.y
         }]}>
         <View style={styles.textContainer}>
           <View style={styles.insideContainer}>
-            <Text style={[styles.teamScoreText, , fontLoaded && { fontFamily: 'dallas' }]}>{this.props.teamScore}</Text>
-            <Text style={[styles.scoreBoardText, fontLoaded && { fontFamily: 'dallas' }]}>Total</Text>
-            <Text style={[styles.scoreText, , fontLoaded && { fontFamily: 'dallas' }]}>{this.props.totalPoints}</Text>
-            <Text style={[styles.scoreBoardText, fontLoaded && { fontFamily: 'dallas' }]}>Best</Text>
-            <Text style={[styles.scoreText, , fontLoaded && { fontFamily: 'dallas' }]}>{this.props.highScore}</Text>
-            <Text style={[styles.scoreBoardText, fontLoaded && { fontFamily: 'dallas' }]}>Score</Text>
-            <Text style={[styles.scoreTextPersonal, , fontLoaded && { fontFamily: 'dallas' }]}>{this.props.score}</Text>
+            <Text style={[styles.teamScoreText, , fontLoaded && { fontFamily: 'font' }]}>{this.props.teamScore}</Text>
+            <Text style={[styles.scoreBoardText, fontLoaded && { fontFamily: 'font' }]}>Total</Text>
+            <Text style={[styles.scoreText, , fontLoaded && { fontFamily: 'font' }]}>{this.props.totalPoints}</Text>
+            <Text style={[styles.scoreBoardText, fontLoaded && { fontFamily: 'font' }]}>Best</Text>
+            <Text style={[styles.scoreText, , fontLoaded && { fontFamily: 'font' }]}>{this.props.highScore}</Text>
+            <Text style={[styles.scoreBoardText, fontLoaded && { fontFamily: 'font' }]}>Score</Text>
+            <Text style={[styles.scoreTextPersonal, , fontLoaded && { fontFamily: 'font' }]}>{this.props.score}</Text>
           </View>
           {/* <View style={styles.insideContainer}>
           </View> */}
@@ -55,7 +55,7 @@ class Score extends Component {
 const styles = StyleSheet.create({
   teamScoreText: {
     fontSize: 24,
-    color: '#d6d7da',
+    // color: '#d6d7da',
     padding: 5
   },
   scoreBoardText: {

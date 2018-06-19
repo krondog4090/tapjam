@@ -2,10 +2,9 @@ import { createStackNavigator } from 'react-navigation';
 import MainMenu from './screens/MainMenu';
 import Practice from './screens/practice/Practice';
 import LeagueMenu from './screens/league/LeagueMenu';
+import Court from './screens/league/Court';
 
 // Western Teams
-import Dallas from './screens/league/western/westernteams/Dallas/Dallas';
-
 // Eastern Teams
 
 
@@ -20,8 +19,8 @@ export default createStackNavigator({
   //   screen: Practice
   // },
   // Western Teams
-  Dallas: {
-    screen: Dallas
+  Court: {
+    screen: Court
   }
   // Eastern Teams 
 });
